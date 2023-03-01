@@ -1,4 +1,5 @@
 import './Expenses.css'
+import Card from "../UI/Card";
 
 import ExpenseItem from './ExpenseItem'
 
@@ -12,8 +13,8 @@ export default function Expenses(props) {
 	)
 
 	return (
-		<div className="expenses">
+		<Card className="expenses">
 			{expensesList}
-		</div>
+		</Card>
 	)
 }
