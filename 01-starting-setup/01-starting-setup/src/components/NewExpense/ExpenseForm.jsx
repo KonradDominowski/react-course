@@ -32,6 +32,11 @@ export default function ExpenseForm(props) {
     setEnteredTitle("");
     setEnteredAmount("");
     setEnteredDate("");
+    props.onFormVisibilityChange();
+  };
+
+  const handleClick = (e) => {
+    props.onFormVisibilityChange();
   };
 
   // When you depend on previous state you should pass an anonymous function to setState function with
@@ -105,7 +110,12 @@ export default function ExpenseForm(props) {
           </div>
         </div>
         <div className="new-expense__actions">
-          <button type="submit">Add Expense</button>
+          <button type="button" onClick={handleClick}>
+            Cancel
+          </button>
+          <button type="submit" onSubmit={submitHandler}>
+            Add Expense
+          </button>
         </div>
       </form>
     </div>
