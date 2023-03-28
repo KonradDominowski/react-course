@@ -7,17 +7,7 @@ import classes from "./HeaderCartButton.module.css";
 
 export default function HeaderCartButton(props) {
   const [bump, setBump] = useState(false);
-  const [cartVisible, setCartVisible] = useState(false);
 
-  const handleCartButtonClick = () => {
-    setCartVisible((prevState) => !prevState);
-  };
-
-  const handleCloseModal = () => {
-    setCartVisible(false);
-  };
-
-  // Add a bump everytime sum of the items in a card changes, then remove it after animation finished
   useEffect(() => {
     setBump(true);
     setTimeout(() => {
@@ -27,10 +17,9 @@ export default function HeaderCartButton(props) {
 
   return (
     <>
-      {cartVisible && <CartModal onCloseModal={handleCloseModal} />}
       <div
         className={`${classes.button} + ${bump ? classes.bump : ""}`}
-        onClick={handleCartButtonClick}
+        onClick={props.handleToggleModal}
       >
         <CartIcon className={classes.icon} />
         <div>Your Cart</div>

@@ -10,7 +10,10 @@ export default function Header(props) {
     <>
       <div className={classes.header}>
         <h1>ReactMeals</h1>
-        <HeaderCartButton cartItemsSum={props.cartItemsSum} />
+        <HeaderCartButton
+          cartItemsSum={props.cartItemsSum}
+          handleToggleModal={props.handleToggleModal}
+        />
       </div>
       <div className={classes["main-image"]}>
         <img src={mainImage} alt="" />
