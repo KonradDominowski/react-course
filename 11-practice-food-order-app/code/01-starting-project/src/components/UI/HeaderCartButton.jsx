@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 import CartIcon from "./CartIcon";
-import CartModal from "../Modal/Modal";
 
 import classes from "./HeaderCartButton.module.css";
 
@@ -10,9 +9,14 @@ export default function HeaderCartButton(props) {
 
   useEffect(() => {
     setBump(true);
-    setTimeout(() => {
+
+    const timer = setTimeout(() => {
       setBump(false);
     }, 300);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [props.cartItemsSum]);
 
   return (
