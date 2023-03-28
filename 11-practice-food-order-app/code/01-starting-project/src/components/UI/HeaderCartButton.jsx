@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 
-import classes from "./HeaderCartButton.module.css";
 import CartIcon from "./CartIcon";
 import CartModal from "../Modal/Modal";
+
+import classes from "./HeaderCartButton.module.css";
 
 export default function HeaderCartButton(props) {
   const [bump, setBump] = useState(false);
