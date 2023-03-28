@@ -17,13 +17,19 @@
 
 #### 6. [Obsługa eventów](#obsługa-eventów)
 
-#### 7. [Wyświetlanie list](#7-wyświetlanie-list)
+#### 7. [Wyświetlanie list](#renderowanie-list)
 
 #### 8. [React Fragment - czyli jak się pozbyć niepotrzebnych divów](#react-fragment---czyli-jak-się-pozbyć-niepotrzebnych-divów)
 
-#### 9. [Portal - czyli jak wyrenderować komponent w innym miejscu niż został wywołany](#portal---czy-jak-wyrenderować-komponent-w-innym-miejscu-niż-został-wywołany)
+#### 9. [Portal - czyli jak wyrenderować komponent w innym miejscu niż został wywołany](#portal---czyli-jak-wyrenderować-komponent-w-innym-miejscu-niż-został-wywołany)
 
 #### 10. [useRef - wyciąganie danych z DOM](#useref---wyciąganie-danych-z-drzewa-dom)
+
+#### 11. [useEffect](#useeffect---funkcja-wykonuje-się-tylko-jeśli-lista-zależności-się-zmieni)
+
+#### 12. [useReducer - zarządzanie bardziej skomplikowanych stanem](#usereducer---zarządzanie-bardziej-skomplikowanym-stanem)
+
+#### 13. [useContext](#usecontext)
 
 ---
 
@@ -145,6 +151,8 @@ React renderuje stronę tylko raz, więc aby zmienić dane na stronie, należy j
 
 Funkcja **useState** tworzy zmienną, oraz funkcję, która służy do zmiany jej wartości. **State** jest o tyle unikalny, że przy jego zmianie, dane na stronie są renderowane ponownie. React zadba o to aby zmienić tylko te elementy strony, które faktycznie uległy zmianie.
 
+**setState** jest funkcją służącą do zmiany wartości stanu, po jej użyciu przypisujemy nową wartość a także wywołujemy ponowne renderowanie komponentu.
+
 Jeśli zmieniam **State** w oparciu o poprzedni **state**, na przykład inkrementuję wartość o 1, powinienem się odwołać do poprzedniej wartości State, przekazując jako parametr funkcję a jako parametr poprzedni stan, a dopiero do niej nową wartość stanu.
 
 ```jsx
@@ -157,6 +165,8 @@ setDataState(someNewData);
 // Zmiana stanu w oparciu o poprzednią wartość stanu
 const setDataState = (previousState) => previousState + 1;
 ```
+
+Aby zarządzać stanem w bardziej rozbudowany sposób, użyj [useReducer](#usereducer---zarządzanie-bardziej-skomplikowanym-stanem).
 
 ---
 
@@ -279,6 +289,8 @@ export default function Modal() {
 
 Hook **useRef** służy do fetchowania danych za pomocą właściwości `ref`, która jest natywna dla HTML. **useRef** zwraca nam obiekt, który ma właściwość current, przechowującą aktualny **element DOM**.
 
+Wartość **useRef**, podobnie jak [useState](#5-usestate---aktualizacja-danych-na-stronie), zachowuje swoją wartość pomiędzy kolejnymi renderami komponentu, jednakże zasadnicza różnica polega na tym, że **useRef** nie wywołuje kolejnego renderu przy zmianie swojej wartości.
+
 ```jsx
 import { React, useRef } from "react";
 
@@ -298,6 +310,191 @@ export default function UserForm(props) {
       ref={enteredAgeRef}
       onChange={handleAgeChange}
     />
+  );
+}
+```
+
+---
+
+## useEffect - funkcja wykonuje się tylko jeśli lista zależności się zmieni
+
+Hook **useEffect** służy do obsługi efektów ubocznych aplikacji, niezwiązanych bezpośrednio z UI. Na przykład logowanie użytkownika albo fetchowanie danych.
+
+```jsx
+// Składnia
+// Dwa argumenty - funkcja do wykonania oraz lista zależności
+import { useEffect } from "react";
+
+useEffect(() => {
+  doSomethingOnlyIfItem1orItem2Changes();
+}, [item1, item2]);
+
+// Różne wersje w zależności od dependencies:
+
+// Brak deklaracji - funkcja wykona się przy każdym renderowaniu komponentu
+useEffect(() => {
+  doSomething();
+});
+
+// Pusta lista zależności - funkcja wykona się RAZ - przy pierwszym renderze komponentu
+
+useEffect(() => {
+  doSomething();
+}, []);￼
+￼
+￼
+￼
+1.5x
+￼
+
+
+// Lista zależności zawiera wartości STANÓW - funkcja wykona się gdy wartość któregokolwiek ze stanów podanych w zależnościach się zmieni
+
+useEffect(() => {
+  doSomething();
+}, [stateValue1, stateValue2]);
+```
+
+---
+
+## useReducer - zarządzanie bardziej skomplikowanym stanem
+
+Hook **useReducer** służy do zarządzania stanem w bardziej zaawansowany sposób. Do modyfikacji stanu służy funkcja **dispatch**, która może się zachowywać różnie, w zależności od tego, jaką **akcję** przekażemy do niej jako argument
+
+```jsx
+export default function Component(props) {
+  // Zmienna z akcjami aby łatwiej się żyło
+  const ACTIONS = {
+    INCREMENT: "increment",
+    DECREMENT: "decrement",
+    SET_VALUE: "set_value",
+  };
+
+  // reducer - funkcja, która aktualizuje stan w oparciu o argument ACTION i poprzednią wartość stanu
+
+  const reducer = function (state, action) {
+    if (action.type === ACTIONS.INCREMENT) {
+      return { count: state.count + 1 };
+    } else if (action.type === ACTIONS.DECREMENT) {
+      return { count: state.count - 1 };
+    } else if (action.type === ACTIONS.SET_VALUE) {
+      return { count: action.value };
+    } else {
+      return state;
+    }
+  };
+
+  // initialState - stan początkowy - { count: 0 }
+
+  const [state, dispatchState] = useReducer(reducer, { count: 0 });
+
+  // state - wartość stanu, tak jak przy useState
+  // dispatchState - funkcja do zmiany stanu, ale bardziej zaawansowana, można do niej przekazać argument, na podstawie którego w różny sposób zaktualizuje się stan, jako argument przekazuje się obiekt z właściwością type, zawierającą informację w jaki sposób zmienić wartość stanu
+
+  const increment = function () {
+    // Wywołuję funkcję dispatch, a jako akcję przekazuję 'INCREMENT'
+    // Funkcja dispatch wykonuje działania odpowiednie dla tej akcji
+    dispatchState({ type: ACTIONS.INCREMENT });
+  };
+
+  const decrement = function () {
+    dispatchState({ type: ACTIONS.DECREMENT });
+  };
+
+  const handleNumberChange = (e) => {
+    // Wywołuję funkcję dispatch, przekazując oprócz typu akcji również tzw. PAYLOAD (nazwa dowolna), czyli dodatkowe informacje, na przykład w tym wypadku wartość pola w formularzu
+    dispatchState({
+      type: ACTIONS.SET_VALUE,
+      value: e.target.value,
+    });
+  };
+
+  return (
+    <>
+      <button onClick={decrement}>-</button>
+      <h1>{state.count}</h1>
+      <button onClick={increment}>+</button>
+      <input type="number" onChange={handleNumberChange} />
+    </>
+  );
+}
+```
+
+---
+
+## useContext
+
+Zamiast przekazywać dane poprzez wiele komponentów, możemy skorzystać z **Context** API wbudowanego w Reacta, które pozwala nam na dostęp do danych bez żmudnego przekazywania ich w propsach.
+
+Kontekst jest dobry, kiedy mamy mocno rozbudowane drzewo [Komponentów](#komponenty), i musimy przekazać dalej niż bezpośrednio do dziecka.
+
+Używając tego hooka kod jest czystszy i niezaśmiecony niepotrzebnym przekazywaniem danych w każdym kolejnym dziecku, aż do komponentu, w którym chcemy z niego skorzystać.
+
+1. Utworzenie kontekstu
+2. Przekazanie kontekstu do dzieci poprzez `<ContextName.Provider value={someValue} />`
+3. Konsumowanie kontekstu wewnątrz dzieci za pomocą `useContext(contextName)`
+
+```jsx
+// Plik definiujący kontekst
+import React from "react";
+
+const AuthContext = React.createContext({
+  isLoggedIn: false,
+  onLogout: () => {}, // Zaznaczam, że ta właściwość ma być jakąś funkcją, żeby IDE mi lepiej podpowiadał gdy będę używał kontekstu
+});
+
+export default AuthContext;
+```
+
+```jsx
+// Plik dostarczający kontekst do komponentu
+import React from "react";
+
+// Importowanie kontekstu
+import AuthContext from "./context/auth-context";
+
+export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Przekazanie kontekstu WSZYSTKIM dzieciom i dzieciom dzieci itd. wewnątrz Providera
+  return (
+    <AuthContext.Provider
+      value={{
+        isLoggedIn: isLoggedIn,
+        onLogout: logoutHandler,
+      }}
+    >
+      <MainHeader />
+      <main>
+        {!isLoggedIn && <Login onLogin={loginHandler} />}
+        {isLoggedIn && <Home onLogout={logoutHandler} />}
+      </main>
+    </AuthContext.Provider>
+  );
+}
+```
+
+```jsx
+// Plik konsumujący (korzystający z) kontekst
+import React, { useContext } from "react";
+
+// Importowanie kontekstu
+import AuthContext from "./context/auth-context";
+
+// Dziecko dziecka dziecka komponentu MainHeader, do któego przekazaliśmy kontekst
+export default function Navigation() {
+  const ctx = useContext(AuthContext);
+
+  return (
+    <nav className={classes.nav}>
+      <ul>
+        {ctx.isLoggedIn && (
+          <li>
+            <button onClick={ctx.onLogout}>Logout</button>
+          </li>
+        )}
+      </ul>
+    </nav>
   );
 }
 ```
