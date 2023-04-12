@@ -31,6 +31,12 @@
 
 #### 13. [useContext](#usecontext)
 
+#### 14. [Tworzenie własnych hooków](#tworzenie-własnych-hooków)
+
+#### 15. [useCallback](#usecallback---czyli-zapisanie-funkcji-w-pamięci-aby-nie-tworzyć-jej-na-nowo-przy-każdym-renderze)
+
+#### 16. [Redux](#redux)
+
 ---
 
 ## **React**
@@ -44,6 +50,8 @@ Każdy element na stronie to **[Komponent](#komponenty)**, który można podziel
 ---
 
 ## **Komponenty**
+
+[React Documentation](https://react.dev/reference/react-dom/components)
 
 **Komponenty** to funkcje które zwracają kod **JSX**
 
@@ -147,6 +155,8 @@ export default function ChildComponent(props) {
 
 ## Aktualizacja danych na stronie - useState()
 
+[React Documentation](https://react.dev/reference/react/useState)
+
 React renderuje stronę tylko raz, więc aby zmienić dane na stronie, należy jeszcze raz ją wyrenderować. Przy korzystaniu ze zwykłych zmiennych, strona się nie odświeża, dlatego należy użyć **Hooka** zwanego **State**.
 
 Funkcja **useState** tworzy zmienną, oraz funkcję, która służy do zmiany jej wartości. **State** jest o tyle unikalny, że przy jego zmianie, dane na stronie są renderowane ponownie. React zadba o to aby zmienić tylko te elementy strony, które faktycznie uległy zmianie.
@@ -171,6 +181,8 @@ Aby zarządzać stanem w bardziej rozbudowany sposób, użyj [useReducer](#usere
 ---
 
 ## Obsługa eventów
+
+[React documentation](https://react.dev/learn/responding-to-events)
 
 Aby obsłużyć event, który wydarzy się na stronie, należy, podobnie jak w waniliowym JSie, utworzyć funkcję, która odpowiada za to, co ma się wydarzyć oraz podpiąć pod element DOM, przekazując ją danego elementu w kodzie JSX, pod nazwą eventu z prefixiem `on`, np. `onClick`, `onMouseEnter`.
 
@@ -250,6 +262,8 @@ export default function ComponentName() {
 
 ## Portal - czyli jak wyrenderować komponent w innym miejscu niż został wywołany
 
+[React documentation](https://react.dev/reference/react-dom/createPortal)
+
 Portale pozwalają nam przetransportować komponent na inne miejsce w drzewie DOM. Dla przykładu, chcemy aby nasz **modal** znajdować się ponad wszystkimi elementami, a nie był zagnieżdżony nie wiadomo jak głęboko, dlatego wykorzystując **portale**, 'teleportujemy' go gdzie indziej, na przykład tak jak poniżej do elementów o id `backdrop-root` oraz `overlay-root`.
 
 ```jsx
@@ -287,6 +301,8 @@ export default function Modal() {
 
 ## useRef - Wyciąganie danych z drzewa DOM
 
+[React documentation](https://react.dev/reference/react/useRef)
+
 Hook **useRef** służy do fetchowania danych za pomocą właściwości `ref`, która jest natywna dla HTML. **useRef** zwraca nam obiekt, który ma właściwość current, przechowującą aktualny **element DOM**.
 
 Wartość **useRef**, podobnie jak [useState](#5-usestate---aktualizacja-danych-na-stronie), zachowuje swoją wartość pomiędzy kolejnymi renderami komponentu, jednakże zasadnicza różnica polega na tym, że **useRef** nie wywołuje kolejnego renderu przy zmianie swojej wartości.
@@ -318,6 +334,8 @@ export default function UserForm(props) {
 
 ## useEffect - funkcja wykonuje się tylko jeśli lista zależności się zmieni
 
+[React documentation](https://react.dev/reference/react/useEffect)
+
 Hook **useEffect** służy do obsługi efektów ubocznych aplikacji, niezwiązanych bezpośrednio z UI. Na przykład logowanie użytkownika albo fetchowanie danych.
 
 ```jsx
@@ -341,12 +359,6 @@ useEffect(() => {
 useEffect(() => {
   doSomething();
 }, []);￼
-￼
-￼
-￼
-1.5x
-￼
-
 
 // Lista zależności zawiera wartości STANÓW - funkcja wykona się gdy wartość któregokolwiek ze stanów podanych w zależnościach się zmieni
 
@@ -358,6 +370,8 @@ useEffect(() => {
 ---
 
 ## useReducer - zarządzanie bardziej skomplikowanym stanem
+
+[React documentation](https://react.dev/reference/react/useReducer)
 
 Hook **useReducer** służy do zarządzania stanem w bardziej zaawansowany sposób. Do modyfikacji stanu służy funkcja **dispatch**, która może się zachowywać różnie, w zależności od tego, jaką **akcję** przekażemy do niej jako argument
 
@@ -423,6 +437,8 @@ export default function Component(props) {
 ---
 
 ## useContext
+
+[React documentation](https://react.dev/reference/react/useContext)
 
 Zamiast przekazywać dane poprzez wiele komponentów, możemy skorzystać z **Context** API wbudowanego w Reacta, które pozwala nam na dostęp do danych bez żmudnego przekazywania ich w propsach.
 
@@ -497,4 +513,83 @@ export default function Navigation() {
     </nav>
   );
 }
+```
+
+---
+
+## Tworzenie własnych hooków
+
+[React documentation](https://react.dev/learn/reusing-logic-with-custom-hooks#extracting-your-own-custom-hook-from-a-component)
+
+Tworzenia własnych hooków pozwala na odseparowanie logiki stanowej od komponentu, co pozwala na wykorzystaje jej w innym komponencie, w którym jest użyta taka sama lub podobna logika.
+
+[**Stan**](#aktualizacja-danych-na-stronie---usestate) zawarty w customowym hooku nie jest przypisany do samego Hooka, ale do komponentu, w którym został użyty, co za tym idzie można go wykorzystać w różnych komponentach.
+
+````jsx
+// Tworzenie hooka
+export default function useCounter(forward = true) {
+	const [counter, setCounter] = useState(0);
+
+	console.log('counter run')
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+
+      // W zależności od komponentu, w którym zostanie użyty hook useCounter:
+
+      // Ten hook może inkrementować counter do góry:
+			if (forward) {
+        setCounter((prevCounter) => prevCounter + 1)
+        }
+
+      // Ten hook może inkrementować counter w dół:
+			else {
+        setCounter((prevCounter) => prevCounter - 1)
+      }
+
+
+		}, 500);
+
+		return () => clearInterval(interval);
+	}, [forward]);
+
+	return counter
+
+}
+```
+
+
+---
+
+## useCallback - czyli zapisanie funkcji w pamięci aby nie tworzyć jej na nowo przy każdym renderze
+
+[React Documentation](https://react.dev/reference/react/useCallback#usecallback)
+
+Jeżeli chcemy użyć funkcji w [useEffect](#useeffect---funkcja-wykonuje-się-tylko-jeśli-lista-zależności-się-zmieni), która się wykona kiedy na przykład zmienią się argumentu tej funkcji, powinniśmy ją dodać jako dependency. Niestety przy każdym renderze komponentu utworzy się ona na nowo, tworząc nowy pointer do tej funkcji, wywołując useEffext ponownie, tworząc nieskończoną pętlę.
+
+Hook **useCallback** zapisuje funkcję w pamięci, i aktualizuje się tylko, kiedy zmienią się dependencies hooka **useCallback**, zapobiegając niepotrzebym renderom.
+
+```jsx
+const cachedFn = useCallback(fn, arrayOfDependencies);
+````
+
+---
+
+## Redux
+
+```jsx
+// index.js
+// Dostarczanie magazynu danych
+
+import { Provider } from 'react-redux';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <Provider>
+      <App />
+    </Provider>
+  </React.StrictMode>
+);
+);
 ```
