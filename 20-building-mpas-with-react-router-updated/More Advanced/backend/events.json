@@ -1,0 +1,25 @@
+{
+  "events": [
+    {
+      "title": "cvxcxxcv",
+      "image": "http://media.istockphoto.com/id/501387734/pl/zdj%C4%99cie/taniec-przyjaci%C3%B3%C5%82.jpg?s=612x612&w=is&k=20&c=EGY_4Sexk5q8IHuoVYxSg4f7hzZnAo4vXhcJxIc_AtQ=",
+      "date": "2023-04-13",
+      "description": "xcvxcvcx",
+      "id": "27655365-a9db-46c0-a6ec-788499365e8e"
+    },
+    {
+      "title": "ssssssssss",
+      "image": "https://media.istockphoto.com/id/501387734/pl/zdj%C4%99cie/taniec-przyjaci%C3%B3%C5%82.jpg?s=612x612&w=is&k=20&c=EGY_4Sexk5q8IHuoVYxSg4f7hzZnAo4vXhcJxIc_AtQ=",
+      "date": "2023-04-07",
+      "description": "sadasd",
+      "id": "b7ea555a-8681-4469-aece-2023297eaf5d"
+    },
+    {
+      "id": "e1",
+      "title": "A dummy event",
+      "date": "2023-02-22",
+      "image": "https://blog.hubspot.de/hubfs/Germany/Blog_images/Optimize_Marketing%20Events%20DACH%202021.jpg",
+      "description": "Join this amazing event and connect with fellow developers."
+    }
+  ]
+}

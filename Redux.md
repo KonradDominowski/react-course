@@ -148,3 +148,31 @@ export default function Counter() {
   );
 }
 ```
+
+---
+
+## Asynchroniczny kod
+
+```js
+// Aby wykonać asynchroniczne akcje przy użyciu Reduxa, należy utworzyć akcję jak poniżej
+
+export const fetchCartData = () => {
+  return async (dispatch) => {
+    const fetchData = async () => {
+      const res = await fetch("URL");
+
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+
+      return data;
+    };
+
+    try {
+      const cartData = await fetchData();
+      dispatch(cartActions.updatecart({ items: data.items }));
+    } catch (error) {
+      dispatch(ErrorHandlingAction);
+    }
+  };
+};
+```
